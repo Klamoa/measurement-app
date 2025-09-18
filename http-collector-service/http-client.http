@@ -1,0 +1,61 @@
+@host = http://localhost:8082
+
+### Measurement
+
+###
+POST {{host}}/api/measurements
+Content-Type: application/json
+
+[
+  {
+    "name": "Temperature",
+    "value": 23.5,
+    "unit": "Celsius",
+    "sensorId": "00-41-0E-98-88-8F"
+  }
+]
+
+###
+POST {{host}}/api/measurements
+Content-Type: application/json
+
+[
+  {
+    "name": "Humidity",
+    "value": 66.5,
+    "unit": "Percent",
+    "sensorId": "00-41-0E-98-88-8F"
+  }
+]
+
+###
+POST {{host}}/api/measurements
+Content-Type: application/json
+
+[
+  {
+    "name": "Temperature",
+    "value": 23.5,
+    "unit": "Celsius",
+    "sensorId": "00-41-0E-98-88-8F"
+  },
+  {
+    "name": "Humidity",
+    "value": 66.5,
+    "unit": "Percent",
+    "sensorId": "00-41-0E-98-88-8F"
+  }
+]
+
+###
+POST {{host}}/api/measurements
+Content-Type: application/json
+
+[
+  {
+    "name": "Temperature",
+    "value": 21.78,
+    "unit": "Celsius",
+    "sensorId": "sensor-1234"
+  }
+]

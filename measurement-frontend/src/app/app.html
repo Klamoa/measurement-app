@@ -1,0 +1,22 @@
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" [routerLink]="'/'">Measurement App</a>
+
+    <ul class="navbar-nav flex-row mx-auto">
+      <li class="nav-item mx-3">
+        <a class="nav-link" [routerLink]="'/'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Measurements
+        </a>
+      </li>
+      <li class="nav-item mx-3">
+        <a class="nav-link" [routerLink]="'/create'" routerLinkActive="active">
+          Create Measurements
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

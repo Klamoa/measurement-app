@@ -1,0 +1,70 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    restart: unless-stopped
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  measurement-db:
+    image: timescale/timescaledb:latest-pg17
+    container_name: measurement-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: measurement-db
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - measurement-db-data:/var/lib/postgresql/data
+
+  measurement-service:
+    image: klamoa/measurement-service
+    container_name: measurement-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - measurement-db
+      - rabbitmq
+    environment:
+      QUARKUS_HTTP_HOST: 0.0.0.0
+      QUARKUS_HTTP_CORS: true
+      QUARKUS_HTTP_CORS_ORIGINS: "*"
+      QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://measurement-db:5432/measurement-db
+      RABBITMQ_HOST: rabbitmq
+
+  http-collector-service:
+    image: klamoa/http-collector-service
+    container_name: http-collector-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - rabbitmq
+    environment:
+      QUARKUS_HTTP_HOST: 0.0.0.0
+      QUARKUS_HTTP_CORS: true
+      QUARKUS_HTTP_CORS_ORIGINS: "*"
+      RABBITMQ_HOST: rabbitmq
+
+  frontend:
+    image: klamoa/measurement-frontend
+    container_name: measurement-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - measurement-service
+    environment:
+      MEASUREMENT_SERVICE_BASE_URL: "http://localhost:8080/api"
+      HTTP_COLLECTOR_SERVICE_BASE_URL: "http://localhost:8082/api"
+
+
+volumes:
+  rabbitmq-data:
+  measurement-db-data:

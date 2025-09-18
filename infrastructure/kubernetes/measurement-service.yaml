@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    klamoa: measurement-service
+  name: measurement-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      klamoa: measurement-service
+  template:
+    metadata:
+      labels:
+        klamoa: measurement-service
+    spec:
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:1.36
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for RabbitMQ..."
+              until nc -z rabbitmq 5672; do
+                sleep 10
+                echo "RabbitMQ is down..."
+              done
+              echo "RabbitMQ is up"
+              
+              echo "Waiting for PostgreSQL..."
+              until nc -z measurement-db 5432; do
+                sleep 10
+                echo "PostgreSQL is down..."
+              done
+              echo "PostgreSQL is up"
+      containers:
+        - env:
+            - name: QUARKUS_DATASOURCE_REACTIVE_URL
+              value: postgresql://measurement-db:5432/measurement-db
+            - name: QUARKUS_HTTP_HOST
+              value: 0.0.0.0
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_PORT # NOTE: otherwise the port is set as a string
+              value: "5672"
+          image: klamoa/measurement-service
+          name: measurement-service
+          imagePullPolicy: IfNotPresent # NOTE: needed for local built images
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 9000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /q/health/live
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    klamoa: measurement-service
+  name: measurement-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+    - name: "9000"
+      port: 9000
+      targetPort: 9000
+  selector:
+    klamoa: measurement-service

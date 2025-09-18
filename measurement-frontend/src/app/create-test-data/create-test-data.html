@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <h3>Add Measurements</h3>
+
+  @for (measurement of measurements; track $index) {
+    <div class="card mb-3 p-3">
+      <form>
+        <div class="mb-3">
+          <label for="sensorId{{ $index }}" class="form-label">Sensor ID</label>
+          <input
+            type="text"
+            id="sensorId{{ $index }}"
+            class="form-control"
+            placeholder="Enter sensor ID"
+            [(ngModel)]="measurement.sensorId"
+            name="sensorId{{ $index }}"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="name{{ $index }}" class="form-label">Name</label>
+          <input
+            type="text"
+            id="name{{ $index }}"
+            class="form-control"
+            placeholder="Enter measurement name"
+            [(ngModel)]="measurement.name"
+            name="name{{ $index }}"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="unit{{ $index }}" class="form-label">Unit</label>
+          <input
+            type="text"
+            id="unit{{ $index }}"
+            class="form-control"
+            placeholder="Enter unit (e.g. °C, kWh)"
+            [(ngModel)]="measurement.unit"
+            name="unit{{ $index }}"
+            required
+          />
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-danger btn-sm" (click)="removeMeasurement($index)">
+            Remove
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="d-flex gap-2 mt-3">
+    <button type="button" class="btn btn-secondary flex-grow-1" (click)="addMeasurement()">
+      Add Measurement
+    </button>
+    <button type="button" class="btn btn-success flex-grow-1" (click)="createMeasurement()">
+      Create Measurements
+    </button>
+  </div>
+</div>

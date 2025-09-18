@@ -1,0 +1,14 @@
+<div class="container mt-4">
+  <h3>Available Sensors</h3>
+  <ul class="list-group">
+    @for (sensor of sensorIds; track $index) {
+      <li
+        class="list-group-item list-group-item-action"
+        [routerLink]="['/details', sensor]"
+      >
+        {{ sensor }}
+      </li>
+    }
+  </ul>
+</div>
+

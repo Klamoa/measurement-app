@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    klamoa: measurement-db
+  name: measurement-db
+spec:
+  serviceName: "measurement-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      klamoa: measurement-db
+  template:
+    metadata:
+      labels:
+        klamoa: measurement-db
+    spec:
+      containers:
+        - name: measurement-db
+          image: timescale/timescaledb:latest-pg17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "admin"
+            - name: POSTGRES_DB
+              value: "measurement-db"
+          volumeMounts:
+            - name: measurement-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: measurement-db-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: measurement-db
+spec:
+  clusterIP: None
+  selector:
+    klamoa: measurement-db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

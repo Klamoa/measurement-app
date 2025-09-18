@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: measurement-ingress
+  labels:
+    klamoa: measurement-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"  # enable regex
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          # Frontend
+          - path: /?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: measurement-frontend
+                port:
+                  number: 80
+          # Measurement Service
+          - path: /measurement/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: measurement-service
+                port:
+                  number: 8080
+          # HTTP Collector
+          - path: /collector/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: http-collector-service
+                port:
+                  number: 8082
