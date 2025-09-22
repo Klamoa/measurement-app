@@ -32,7 +32,7 @@ docker build -f http-client/src/main/docker/Dockerfile.jvm -t klamoa/http-client
 docker build -f measurement-frontend/docker/Dockerfile -t klamoa/measurement-frontend .\measurement-frontend\
 ```
 
-### Apply Kubernetes Manifests
+### Running the application
 Needed for Docker Desktop as there is no Ingress Controller installed by default!
 ````shell
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.1/deploy/static/provider/cloud/deploy.yaml
