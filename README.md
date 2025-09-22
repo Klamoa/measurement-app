@@ -1,3 +1,12 @@
+## Running the application
+Needed for Docker Desktop as there is no Ingress Controller installed by default!
+````shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.1/deploy/static/provider/cloud/deploy.yaml
+````
+````shell
+kubectl apply -f infrastructure/kubernetes/.
+````
+
 ## Useful commands to set up and run Kubernetes (Docker Desktop)
 
 ### Build projects and docker
@@ -31,12 +40,3 @@ docker build -f http-client/src/main/docker/Dockerfile.jvm -t klamoa/http-client
 ```shell
 docker build -f measurement-frontend/docker/Dockerfile -t klamoa/measurement-frontend .\measurement-frontend\
 ```
-
-### Running the application
-Needed for Docker Desktop as there is no Ingress Controller installed by default!
-````shell
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.1/deploy/static/provider/cloud/deploy.yaml
-````
-````shell
-kubectl apply -f infrastructure/kubernetes/.
-````
